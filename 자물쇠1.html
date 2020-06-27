@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        text-align: center;
+        padding-top: 10%;
+      }
+      button {
+        width: 50px;
+        height: 40px;
+      }
+      #input {
+        padding-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>비밀번호를 입력하세요</h1>
+
+    <button onclick="onClick(1)">1</button>
+    <button onclick="onClick(2)">2</button>
+    <button onclick="onClick(3)">3</button>
+    <div style="padding-top: 4px;"></div>
+
+    <button onclick="onClick(4)">4</button>
+    <button onclick="onClick(5)">5</button>
+    <button onclick="onClick(6)">6</button>
+    <div style="padding-top: 4px;"></div>
+
+    <button onclick="onClick(7)">7</button>
+    <button onclick="onClick(8)">8</button>
+    <button onclick="onClick(9)">9</button>
+    <div style="padding-top: 4px;"></div>
+
+    <button onclick="onClick('*')">*</button>
+    <button onclick="onClick(0)">0</button>
+    <button onclick="onClick('#')">#</button>
+
+    <h2 id="input"></h2>
+
+    <script>
+      var password = '0909';
+      var input = '';
+
+      function onClick(btn) {
+        btn = btn.toString();
+        input += btn;
+
+        if (input.length == 4) {
+          if (password == input) {
+            alert('주인님 어서오세요');
+            location.replace('https://www.example.com');
+          } else {
+            alert('비밀번호가 틀렸습니다.');
+            input = '';
+          }
+        }
+
+        document.querySelector('#input').innerHTML = input;
+        console.log('입력한 숫자: ' + input);
+      }
+    </script>
+  </body>
+</html>
