@@ -4,9 +4,16 @@
     <style>
       body {
         text-align: center;
-        padding-top: 10%;
+        padding-top: 10px;
       }
-      button {
+      /* .input-group {
+        display: inline-grid;
+        grid-template-columns: 60px 60px 60px;
+        grid-template-rows: 40px 40px 40px 40px;
+        gap: 3px;
+      } */
+      div button {
+        margin: 1px;
         width: 70px;
         height: 50px;
       }
@@ -17,31 +24,31 @@
   </head>
   <body>
     <h1>비밀번호를 입력하세요</h1>
-
-    <button onclick="onClick(1)">1</button>
-    <button onclick="onClick(2)">2</button>
-    <button onclick="onClick(3)">3</button>
-    <div style="padding-top: 4px;"></div>
-
-    <button onclick="onClick(4)">4</button>
-    <button onclick="onClick(5)">5</button>
-    <button onclick="onClick(6)">6</button>
-    <div style="padding-top: 4px;"></div>
-
-    <button onclick="onClick(7)">7</button>
-    <button onclick="onClick(8)">8</button>
-    <button onclick="onClick(9)">9</button>
-    <div style="padding-top: 4px;"></div>
-
-    <button onclick="onClick('*')">*</button>
-    <button onclick="onClick(0)">0</button>
-    <button onclick="onClick('#')">#</button>
-
+    <div class="input-group"></div>
     <h2 id="input"></h2>
 
     <script>
       var password = '0909';
       var input = '';
+
+      displaybuttons();
+
+      function displaybuttons() {
+        var no = 1;
+        var script = '';
+        for (var i = 0; i < 3; i++) {
+          for (var j = 0; j < 3; j++) {
+            script +=
+              "<button onclick='onClick(" + no + ")'>" + no + '</button>';
+            no++;
+          }
+          script += '<br/>';
+        }
+        script += "<button onclick='onClick(*)'>*</button>";
+        script += "<button onclick='onClick(0)'>0</button>";
+        script += "<button onclick='onClick(#)'>#</button>";
+        document.querySelector('.input-group').innerHTML = script;
+      }
 
       function onClick(btn) {
         btn = btn.toString();
