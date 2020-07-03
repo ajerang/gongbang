@@ -31,14 +31,16 @@
       }
       .menu {
         text-align: center;
-        font-size: 1.5rem;
-        background-color: azure;
+        font-size: 1rem;
+        font-weight: bold;
+        /* background-color: azure; */
       }
       .menu > div {
+        background-color: azure;
         padding: 1rem;
       }
       .menu > div:hover {
-        background-color: lightgrey;
+        background-color: lightblue;
       }
       .content {
         text-align: center;
@@ -60,12 +62,12 @@
     </div>
     <script>
       const menuItems = new Map([
-        ['구구단-1', './구구단1.html'],
-        ['구구단-2', './구구단2.html'],
-        ['비밀번호-1', './비밀번호1.html'],
-        ['비밀번호-2', './비밀번호2.html'],
-        ['자물쇠-1', './자물쇠1.html'],
-        ['자물쇠-2', './자물쇠2.html'],
+        ['구구단1', './구구단1.html'],
+        ['구구단2', './구구단2.html'],
+        ['비밀번호1', './비밀번호1.html'],
+        ['비밀번호2', './비밀번호2.html'],
+        ['버튼자물쇠1', './자물쇠1.html'],
+        ['버튼자물쇠2', './자물쇠2.html'],
       ]);
       const nodeMenu = document.querySelector('.menu');
       const contentObject = document.querySelector('.content > object');
