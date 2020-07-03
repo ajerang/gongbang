@@ -2,22 +2,85 @@
 <html>
   <head>
     <style>
-      .left {
-        background: grey;
-        float: left;
-        width: 20%;
-        height: 100%;
-        padding: 10px;
+      .header {
+        grid-area: head;
       }
-      .right {
-        background: white;
-        float: right;
-        width: 80%;
+      .menu {
+        grid-area: menu;
+      }
+      .content {
+        grid-area: main;
+      }
+      .grid-container {
+        display: grid;
+        height: 95vh;
+        width: 95vw;
+        grid-template-areas:
+          'head head'
+          'menu main';
+        grid-template-columns: 20% 1fr;
+        grid-template-rows: 10% 1fr;
+        grid-gap: 10px;
+        /* padding: 10px; */
+      }
+      .header {
+        font-size: 2rem;
+        font-weight: bold;
+        padding-left: 1em;
+        /* text-align: center; */
+      }
+      .menu {
+        text-align: center;
+        font-size: 1.5rem;
+        background-color: azure;
+      }
+      .menu > div {
+        padding: 1rem;
+      }
+      .menu > div:hover {
+        background-color: lightgrey;
+      }
+      .content {
+        text-align: center;
+      }
+      .content > object {
+        width: 100%;
         height: 100%;
+        margin: 1%;
       }
     </style>
   </head>
   <body>
-    <h1>'아재랑 컴퓨터' Do it!</h1>
+    <div class="grid-container">
+      <div class="header">아재랑 컴퓨터</div>
+      <div class="menu"></div>
+      <div class="content">
+        <object type="text/html"></object>
+      </div>
+    </div>
+    <script>
+      const menuItems = new Map([
+        ['구구단-1', './구구단1.html'],
+        ['구구단-2', './구구단2.html'],
+        ['비밀번호-1', './비밀번호1.html'],
+        ['비밀번호-2', './비밀번호2.html'],
+        ['자물쇠-1', './자물쇠1.html'],
+        ['자물쇠-2', './자물쇠2.html'],
+      ]);
+      const nodeMenu = document.querySelector('.menu');
+      const contentObject = document.querySelector('.content > object');
+
+      menuItems.forEach((_, key) => {
+        let div = document.createElement('div');
+        div.innerHTML = key;
+        div.onclick = handleMenuClick;
+        nodeMenu.appendChild(div);
+      });
+
+      function handleMenuClick(e) {
+        const menu = e.target.innerHTML;
+        contentObject.data = menuItems.get(menu);
+      }
+    </script>
   </body>
 </html>

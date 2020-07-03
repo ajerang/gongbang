@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
       body {
         text-align: center;
@@ -17,25 +18,26 @@
   </head>
   <body>
     <h1>비밀번호를 입력하세요</h1>
+    <div class="pad">
+      <button onclick="onClick(1)">1</button>
+      <button onclick="onClick(2)">2</button>
+      <button onclick="onClick(3)">3</button>
+      <div style="padding-top: 4px;"></div>
 
-    <button onclick="onClick(1)">1</button>
-    <button onclick="onClick(2)">2</button>
-    <button onclick="onClick(3)">3</button>
-    <div style="padding-top: 4px;"></div>
+      <button onclick="onClick(4)">4</button>
+      <button onclick="onClick(5)">5</button>
+      <button onclick="onClick(6)">6</button>
+      <div style="padding-top: 4px;"></div>
 
-    <button onclick="onClick(4)">4</button>
-    <button onclick="onClick(5)">5</button>
-    <button onclick="onClick(6)">6</button>
-    <div style="padding-top: 4px;"></div>
+      <button onclick="onClick(7)">7</button>
+      <button onclick="onClick(8)">8</button>
+      <button onclick="onClick(9)">9</button>
+      <div style="padding-top: 4px;"></div>
 
-    <button onclick="onClick(7)">7</button>
-    <button onclick="onClick(8)">8</button>
-    <button onclick="onClick(9)">9</button>
-    <div style="padding-top: 4px;"></div>
-
-    <button onclick="onClick('*')">*</button>
-    <button onclick="onClick(0)">0</button>
-    <button onclick="onClick('#')">#</button>
+      <button onclick="onClick('*')">*</button>
+      <button onclick="onClick(0)">0</button>
+      <button onclick="onClick('#')">#</button>
+    </div>
 
     <h2 id="input"></h2>
 
