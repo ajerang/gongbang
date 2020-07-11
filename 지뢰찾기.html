@@ -38,18 +38,25 @@
         normal: {
           cols: 10,
           rows: 10,
-          rowBombs: 1,
+          rowBombs: 2,
         },
         hard: {
           cols: 20,
           rows: 20,
-          rowBombs: 1,
+          rowBombs: 4,
         },
       };
 
-      const level = LEVEL.hard; // 게임 레벨 지정
+      const level = LEVEL.normal; // 게임 레벨 지정
       const config = new Config(level); // 게임 환경 설정
       const matrix = new Array(); // 매트릭스 선언
+      const container = document.querySelector('.container');
+
+      initContainer(container);
+      initBoxes();
+      initBombs();
+
+      console.log(matrix);
 
       // 게임 환경 객체
       function Config({ rows, cols, rowBombs }) {
@@ -71,15 +78,6 @@
           hint,
         };
       }
-
-      // 객체 비 구조화 할당
-      const container = document.querySelector('.container');
-
-      initContainer(container);
-      initBoxes();
-      initBombs();
-
-      console.log(matrix);
 
       // 컨테이너 아이템 생성
       function initBoxes() {
@@ -109,14 +107,15 @@
       function initBombs() {
         for (let i = 0; i < config.rows; i++) {
           getBombColumns(config.cols, config.rowBombs).forEach((value) => {
-            matrix[i][value].bomb = true;
-            setBoxAround(i, value, (box) => box.hint++);
+            let box = matrix[i][value];
+            box.bomb = true;
+            setBoxAround(box, (otherBox) => otherBox.hint++);
           });
         }
       }
 
       // 박스 주변 설정
-      function setBoxAround(row, col, fn) {
+      function setBoxAround({ row, col }, fn) {
         [row - 1, row, row + 1].forEach((r) => {
           if (r >= 0 && r < config.rows) {
             [col - 1, col, col + 1].forEach((c) => {
@@ -126,7 +125,7 @@
         });
       }
 
-      // 폭탄이 설치된 컴럼번호 반환
+      // 폭탄이 설치될 컴럼번호 반환
       function getBombColumns(limit, cnt) {
         let cols = [];
         for (let i = 0; i < cnt; i++) {
@@ -136,35 +135,36 @@
         return cols;
       }
 
-      function leftClicked(row, col) {
-        const { node, bomb, hint } = matrix[row][col];
-        if (bomb) {
-          node.className = 'box-bomb';
-          alert('폭탄이 터졌습니다. GAME OVER!');
-        } else {
-          if (hint == 0) {
-            setBoxAround(row, col, openBox);
-          } else {
-            node.innerText = hint;
-          }
-          node.className = 'box-open';
-        }
-      }
+      const leftClicked = (row, col) => openBox(matrix[row][col]);
+      const rightClicked = (row, col) => setFlag(matrix[row][col]);
 
       function openBox(box) {
-        let { node, hint } = box;
+        const { node, bomb, hint } = box;
         if (node.className == 'box-init') {
-          node.className = 'box-open';
-          node.innerText = hint > 0 ? hint : '';
+          if (bomb) {
+            node.className = 'box-bomb';
+            gameOver();
+          } else {
+            node.className = 'box-open';
+            node.innerText = hint > 0 ? hint : '';
+
+            if (hint == 0) setBoxAround(box, openBox);
+          }
         }
       }
 
-      function rightClicked(row, col) {
-        let { node, bomb } = matrix[row][col];
+      function setFlag(box) {
+        let { node, bomb } = box;
         if (node.className == 'box-init') {
           node.className = 'box-flag';
+        } else if (node.className == 'box-flag') {
+          node.className = 'box-init';
         }
         return false;
+      }
+
+      function gameOver() {
+        alert('폭탄이 터졌습니다. GAME OVER!');
       }
     </script>
   </body>
