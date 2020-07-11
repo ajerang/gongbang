@@ -12,16 +12,16 @@
       .container > div {
         font-size: 1.2rem;
       }
-      .room-init {
+      .box-init {
         background-color: grey;
       }
-      .room-open {
+      .box-open {
         background-color: lightgrey;
       }
-      .room-bomb {
+      .box-bomb {
         background-color: black;
       }
-      .room-flag {
+      .box-flag {
         background-color: red;
       }
     </style>
@@ -38,65 +38,96 @@
         normal: {
           cols: 10,
           rows: 10,
-          rowBombs: 2,
+          rowBombs: 1,
         },
         hard: {
           cols: 20,
           rows: 20,
-          rowBombs: 4,
+          rowBombs: 1,
         },
       };
 
-      const userLevel = LEVEL.normal; // 사용자 레벨 지정
+      const level = LEVEL.hard; // 게임 레벨 지정
+      const config = new Config(level); // 게임 환경 설정
       const matrix = new Array(); // 매트릭스 선언
 
-      // 룸 함수형 객체 정의
-      function Room({ node, flag = false, bomb = false, cnt = 0 }) {
-        return { node, flag, bomb, cnt };
+      // 게임 환경 객체
+      function Config({ rows, cols, rowBombs }) {
+        return {
+          rows,
+          cols,
+          rowBombs,
+        };
+      }
+
+      // 룸 함수형 객체
+      function Box({ node, row, col, bomb = false, flag = false, hint = 0 }) {
+        return {
+          node,
+          row,
+          col,
+          flag,
+          bomb,
+          hint,
+        };
       }
 
       // 객체 비 구조화 할당
-      const { cols, rows, rowBombs } = userLevel;
+      const container = document.querySelector('.container');
 
-      // 컨테이너 스타일 설정
-      var container = document.querySelector('.container');
-      container.style['grid-template-columns'] = `repeat(${cols}, 50px)`;
-      container.style['grid-template-rows'] = `repeat(${rows}, 50px)`;
-
-      // 컨테이너 아이템 생성
-      for (let i = 0; i < rows; i++) {
-        let colsArray = new Array(); // 매트릭스 행 배열 초기화
-        for (let j = 0; j < cols; j++) {
-          let item = document.createElement('div', {});
-          item.onclick = () => leftClicked(i, j);
-          item.oncontextmenu = () => rightClicked(i, j);
-          item.className = 'room-init';
-          container.appendChild(item);
-          colsArray[j] = new Room({ node: item });
-        }
-        matrix[i] = colsArray;
-      }
+      initContainer(container);
+      initBoxes();
+      initBombs();
 
       console.log(matrix);
 
-      for (let i = 0; i < rows; i++) {
-        bombCols(cols, rowBombs).forEach((value) => {
-          matrix[i][value].bomb = true;
-          setNodeAround(i, value, (room) => room.cnt++);
-        });
+      // 컨테이너 아이템 생성
+      function initBoxes() {
+        for (let i = 0; i < config.rows; i++) {
+          let colsArray = new Array(); // 매트릭스 행 배열 초기화
+          for (let j = 0; j < config.cols; j++) {
+            let node = document.createElement('div', {});
+            node.onclick = () => leftClicked(i, j);
+            node.oncontextmenu = () => rightClicked(i, j);
+            node.className = 'box-init';
+            container.appendChild(node);
+            colsArray[j] = new Box({ node: node, row: i, col: j });
+          }
+          matrix[i] = colsArray;
+        }
       }
 
-      function setNodeAround(row, col, fn) {
+      // 컨테이너 스타일 설정
+      function initContainer(container) {
+        container.style[
+          'grid-template-columns'
+        ] = `repeat(${config.cols}, 50px)`;
+        container.style['grid-template-rows'] = `repeat(${config.rows}, 50px)`;
+      }
+
+      // 폭탄 초기화
+      function initBombs() {
+        for (let i = 0; i < config.rows; i++) {
+          getBombColumns(config.cols, config.rowBombs).forEach((value) => {
+            matrix[i][value].bomb = true;
+            setBoxAround(i, value, (box) => box.hint++);
+          });
+        }
+      }
+
+      // 박스 주변 설정
+      function setBoxAround(row, col, fn) {
         [row - 1, row, row + 1].forEach((r) => {
-          if (r >= 0 && r < rows) {
+          if (r >= 0 && r < config.rows) {
             [col - 1, col, col + 1].forEach((c) => {
-              c >= 0 && c < cols && fn(matrix[r][c]);
+              c >= 0 && c < config.cols && fn(matrix[r][c]);
             });
           }
         });
       }
 
-      function bombCols(limit, cnt) {
+      // 폭탄이 설치된 컴럼번호 반환
+      function getBombColumns(limit, cnt) {
         let cols = [];
         for (let i = 0; i < cnt; i++) {
           cols.push(Math.floor(Math.random() * 10) % limit);
@@ -106,27 +137,32 @@
       }
 
       function leftClicked(row, col) {
-        const { node, bomb, cnt } = matrix[row][col];
+        const { node, bomb, hint } = matrix[row][col];
         if (bomb) {
-          node.className = 'room-bomb';
+          node.className = 'box-bomb';
           alert('폭탄이 터졌습니다. GAME OVER!');
         } else {
-          if (cnt == 0) {
-            setNodeAround(row, col, ({ node, cnt }) => {
-              node.className = 'room-open';
-              node.innerText = cnt > 0 ? cnt : '';
-            });
+          if (hint == 0) {
+            setBoxAround(row, col, openBox);
           } else {
-            node.innerText = cnt;
+            node.innerText = hint;
           }
-          node.className = 'room-open';
+          node.className = 'box-open';
+        }
+      }
+
+      function openBox(box) {
+        let { node, hint } = box;
+        if (node.className == 'box-init') {
+          node.className = 'box-open';
+          node.innerText = hint > 0 ? hint : '';
         }
       }
 
       function rightClicked(row, col) {
-        let { node, bomb, cnt } = matrix[row][col];
-        if (node.className == 'room-init') {
-          node.className = 'room-flag';
+        let { node, bomb } = matrix[row][col];
+        if (node.className == 'box-init') {
+          node.className = 'box-flag';
         }
         return false;
       }
