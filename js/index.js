@@ -6,6 +6,7 @@ const menuItems = new Map([
   ['비밀번호2', './비밀번호2.html'],
   ['버튼자물쇠1', './자물쇠1.html'],
   ['버튼자물쇠2', './자물쇠2.html'],
+  ['지뢰찾기', './지뢰찾기.html'],
 ]);
 const nodeMenu = document.querySelector('.menu');
 const contentObject = document.querySelector('.content > object');
