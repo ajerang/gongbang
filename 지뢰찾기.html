@@ -5,6 +5,9 @@
       body {
         text-align: center;
       }
+      .layout {
+        display: grid;
+      }
       .container {
         display: grid;
         gap: 1px;
@@ -27,28 +30,12 @@
     </style>
   </head>
   <body>
-    <div class="container"></div>
+    <div class="layout">
+      <div class="container"></div>
+    </div>
     <script>
-      const LEVEL = {
-        easy: {
-          cols: 5,
-          rows: 5,
-          rowBombs: 1,
-        },
-        normal: {
-          cols: 10,
-          rows: 10,
-          rowBombs: 2,
-        },
-        hard: {
-          cols: 20,
-          rows: 20,
-          rowBombs: 4,
-        },
-      };
-
-      const level = LEVEL.normal; // 게임 레벨 지정
-      const config = new Config(level); // 게임 환경 설정
+      const MAX_COLS = 100;
+      const config = new Config(); // 게임 환경 설정
       const matrix = new Array(); // 매트릭스 선언
       const container = document.querySelector('.container');
 
@@ -59,12 +46,12 @@
       console.log(matrix);
 
       // 게임 환경 객체
-      function Config({ rows, cols, rowBombs }) {
-        return {
-          rows,
-          cols,
-          rowBombs,
-        };
+      function Config() {
+        const rows = prompt('지뢰밭 크기(컬럼 수; 최대값 100):');
+        const cols = rows;
+        const bombs = prompt(`폭탄 갯수(최대값 ${rows * rows}):`);
+
+        return { rows, cols, bombs };
       }
 
       // 룸 함수형 객체
@@ -82,17 +69,25 @@
       // 컨테이너 아이템 생성
       function initBoxes() {
         for (let i = 0; i < config.rows; i++) {
-          let colsArray = new Array(); // 매트릭스 행 배열 초기화
+          matrix[i] = new Array();
           for (let j = 0; j < config.cols; j++) {
             let node = document.createElement('div', {});
             node.onclick = () => leftClicked(i, j);
             node.oncontextmenu = () => rightClicked(i, j);
             node.className = 'box-init';
+            node.id = getNodeId(i, j);
             container.appendChild(node);
-            colsArray[j] = new Box({ node: node, row: i, col: j });
+            matrix[i][j] = new Box({
+              node: node, // document.getElementById(node.id),
+              row: i,
+              col: j,
+            });
           }
-          matrix[i] = colsArray;
         }
+      }
+
+      function getNodeId(row, col) {
+        return `${row}-${col}`;
       }
 
       // 컨테이너 스타일 설정
@@ -105,34 +100,45 @@
 
       // 폭탄 초기화
       function initBombs() {
-        for (let i = 0; i < config.rows; i++) {
-          getBombColumns(config.cols, config.rowBombs).forEach((value) => {
-            let box = matrix[i][value];
-            box.bomb = true;
-            setBoxAround(box, (otherBox) => otherBox.hint++);
-          });
-        }
+        const { rows, cols, bombs } = config;
+        let col, row;
+        getRandomNums(rows * cols, bombs).forEach((idx) => {
+          row = Math.floor(idx / rows);
+          col = idx - row * rows;
+          matrix[row][col].bomb = true;
+          setBoxAround(matrix[row][col], (box2) => box2.hint++);
+        });
       }
 
-      // 박스 주변 설정
+      // TODO 박스 주변 설정 - 최적화 필요
       function setBoxAround({ row, col }, fn) {
         [row - 1, row, row + 1].forEach((r) => {
           if (r >= 0 && r < config.rows) {
             [col - 1, col, col + 1].forEach((c) => {
-              c >= 0 && c < config.cols && fn(matrix[r][c]);
+              c >= 0 &&
+                c < config.cols &&
+                !(r == row && c == col) &&
+                fn(matrix[r][c]);
             });
           }
         });
       }
 
       // 폭탄이 설치될 컴럼번호 반환
-      function getBombColumns(limit, cnt) {
+      function getRandomNums(limit, cnt) {
         let cols = [];
         for (let i = 0; i < cnt; i++) {
-          cols.push(Math.floor(Math.random() * 10) % limit);
+          let no;
+          do no = randomNo(limit);
+          while (cols.find((x) => x == no));
+          cols.push(no);
         }
         console.log('bomb', cols);
         return cols;
+      }
+
+      function randomNo(limit) {
+        return Math.floor(Math.random() * limit);
       }
 
       const leftClicked = (row, col) => openBox(matrix[row][col]);
