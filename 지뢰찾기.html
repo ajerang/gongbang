@@ -3,10 +3,8 @@
   <head>
     <style>
       body {
-        text-align: center;
-      }
-      .layout {
-        display: grid;
+        /* text-align: center; */
+        background-color: orange;
       }
       .container {
         display: grid;
@@ -14,18 +12,27 @@
       }
       .container > div {
         font-size: 1.2rem;
+        text-align: center;
+        padding-top: 20%;
       }
       .box-init {
-        background-color: grey;
+        background-color: gold;
       }
       .box-open {
-        background-color: lightgrey;
+        background-color: lightyellow;
       }
       .box-bomb {
-        background-color: black;
+        background-image: url('./resources/bomb.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        padding: 0;
       }
       .box-flag {
-        background-color: red;
+        /* background-color: lightgreen; */
+        background-image: url('./resources/flag.jpg');
+        background-size: contain;
+        background-repeat: no-repeat;
+        padding: 0;
       }
     </style>
   </head>
@@ -154,7 +161,7 @@
             node.className = 'box-open';
             node.innerText = hint > 0 ? hint : '';
 
-            if (hint == 0) setBoxAround(box, openBox);
+            if (hint === 0) setBoxAround(box, openBox);
           }
         }
       }
